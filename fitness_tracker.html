@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAGX - Fitness Tracker</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#111;
+    color:white;
+    text-align:center;
+    padding-top:40px;
+}
+
+.container{
+    background:#1e1e1e;
+    width:320px;
+    margin:auto;
+    padding:25px;
+    border-radius:20px;
+    border:2px solid #4caf50;
+    box-shadow:0 0 20px rgba(76,175,80,0.3);
+}
+
+.mission-btn{
+    width:100%;
+    padding:15px;
+    margin:12px 0;
+    border:none;
+    border-radius:10px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    color:white;
+    background:#2a2a2a;
+    border-left:5px solid #4caf50;
+    text-align:left;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.mission-btn:hover{
+    background:#333;
+}
+
+.xp-badge{
+    background:rgba(76,175,80,0.2);
+    color:#4caf50;
+    padding:4px 8px;
+    border-radius:5px;
+    font-size:12px;
+}
+
+.back{
+    display:inline-block;
+    margin-top:20px;
+    color:#aaa;
+    text-decoration:none;
+}
+
+#toast{
+    position:fixed;
+    top:20px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#4caf50;
+    color:white;
+    padding:12px 20px;
+    border-radius:10px;
+    display:none;
+    z-index:9999;
+}
+</style>
+</head>
+
+<body>
+
+<div id="toast"></div>
+
+<div class="container">
+
+<h2>🏋️‍♂️ Workout Tracker</h2>
+<p>Crush your workouts and earn rewards!</p>
+
+<button class="mission-btn" onclick="claimXp(25)">
+<span>💪 Complete Heavy Gym Session</span>
+<span class="xp-badge">+25 XP</span>
+</button>
+
+<button class="mission-btn" onclick="claimXp(15)">
+<span>🏃‍♂️ 20 Mins Cardio / Running</span>
+<span class="xp-badge">+15 XP</span>
+</button>
+
+<button class="mission-btn" onclick="claimXp(10)">
+<span>🧘 Morning Yoga & Stretch</span>
+<span class="xp-badge">+10 XP</span>
+</button>
+
+<br>
+
+<a href="dashboard.html" class="back">
+← Back To Dashboard
+</a>
+
+</div>
+
+<script>
+
+function showToast(text){
+    let toast=document.getElementById("toast");
+
+    toast.innerText=text;
+    toast.style.display="block";
+
+    setTimeout(()=>{
+        toast.style.display="none";
+    },2000);
+}
+
+function getXpNeeded(level){
+    return 50*Math.pow(2,level-1);
+}
+
+function claimXp(xpReward){
+
+    let currentXp=
+    parseInt(localStorage.getItem("nagx_xp"))||0;
+
+    let currentLevel=
+    parseInt(localStorage.getItem("nagx_level"))||1;
+
+    let currentCoins=
+    parseInt(localStorage.getItem("nagx_coins"))||0;
+
+    currentXp+=xpReward;
+    currentCoins+=Math.floor(xpReward/5);
+
+    let streak=
+    parseInt(localStorage.getItem("nagx_streak"))||0;
+
+    let today=
+    new Date().toDateString();
+
+    let lastDate=
+    localStorage.getItem("nagx_last_date");
+
+    if(lastDate!==today){
+        streak++;
+
+        localStorage.setItem(
+        "nagx_streak",
+        streak);
+
+        localStorage.setItem(
+        "nagx_last_date",
+        today);
+    }
+
+    let xpNeeded=
+    getXpNeeded(currentLevel);
+
+    while(currentXp>=xpNeeded){
+
+        currentXp-=xpNeeded;
+        currentLevel++;
+
+        xpNeeded=
+        getXpNeeded(currentLevel);
+
+        showToast(
+        "🚀 Level Up! Level "
+        +currentLevel);
+    }
+
+    localStorage.setItem(
+    "nagx_xp",
+    currentXp);
+
+    localStorage.setItem(
+    "nagx_level",
+    currentLevel);
+
+    localStorage.setItem(
+    "nagx_coins",
+    currentCoins);
+
+    showToast(
+    "🎉 +" + xpReward +
+    " XP | 🪙 +" +
+    Math.floor(xpReward/5) +
+    " Coins");
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAGX - Journal</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#111;
+    color:white;
+    text-align:center;
+    padding-top:40px;
+}
+
+.container{
+    background:#1e1e1e;
+    width:320px;
+    margin:auto;
+    padding:25px;
+    border-radius:20px;
+    border:2px solid #9c27b0;
+    box-shadow:0 0 20px rgba(156,39,176,0.3);
+}
+
+textarea{
+    width:95%;
+    height:120px;
+    border:none;
+    border-radius:10px;
+    padding:10px;
+    margin-bottom:15px;
+    background:#2a2a2a;
+    color:white;
+    resize:none;
+}
+
+.mission-btn{
+    width:100%;
+    padding:15px;
+    margin:10px 0;
+    border:none;
+    border-radius:10px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    color:white;
+    background:#2a2a2a;
+    border-left:5px solid #9c27b0;
+}
+
+.mission-btn:hover{
+    background:#333;
+}
+
+.back{
+    display:inline-block;
+    margin-top:20px;
+    color:#aaa;
+    text-decoration:none;
+}
+
+#toast{
+    position:fixed;
+    top:20px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#9c27b0;
+    color:white;
+    padding:12px 20px;
+    border-radius:10px;
+    display:none;
+}
+</style>
+</head>
+
+<body>
+
+<div id="toast"></div>
+
+<div class="container">
+
+<h2>📝 Daily Journal</h2>
+<p>Write your thoughts and earn XP!</p>
+
+<textarea id="journalText"
+placeholder="Write your thoughts here..."></textarea>
+
+<button class="mission-btn" onclick="saveJournal()">
+💾 Save Journal (+20 XP)
+</button>
+
+<button class="mission-btn" onclick="showJournal()">
+📖 View Saved Journal
+</button>
+
+<a href="dashboard.html" class="back">
+<br>← Back To Dashboard
+</a>
+
+</div>
+
+<script>
+
+function toast(msg){
+    let t=document.getElementById("toast");
+    t.innerText=msg;
+    t.style.display="block";
+
+    setTimeout(()=>{
+        t.style.display="none";
+    },2000);
+}
+
+function getXpNeeded(level){
+    return 50*Math.pow(2,level-1);
+}
+
+function saveJournal(){
+
+    let text=document.getElementById("journalText").value;
+
+    if(text.trim()==""){
+        toast("⚠️ Write something first!");
+        return;
+    }
+
+    localStorage.setItem("nagx_journal",text);
+
+    let xp=parseInt(localStorage.getItem("nagx_xp"))||0;
+    let level=parseInt(localStorage.getItem("nagx_level"))||1;
+
+    xp+=20;
+
+    let needed=getXpNeeded(level);
+
+    while(xp>=needed){
+        xp-=needed;
+        level++;
+        needed=getXpNeeded(level);
+        toast("🚀 Level Up! Level "+level);
+    }
+
+    localStorage.setItem("nagx_xp",xp);
+    localStorage.setItem("nagx_level",level);
+
+    toast("🎉 Journal Saved! +20 XP");
+}
+
+function showJournal(){
+
+    let text=localStorage.getItem("nagx_journal");
+
+    if(!text){
+        toast("No journal saved yet!");
+        return;
+    }
+
+    alert(text);
+}
+
+</script>
+
+</body>
+</html>

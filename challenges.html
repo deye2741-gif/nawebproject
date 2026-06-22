@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAGX - Challenges Log</title>
+
+<style>
+body { margin: 0; font-family: Arial, sans-serif; background: #111; color: white; text-align: center; padding-top: 40px; }
+
+.container {
+    background: #1e1e1e;
+    width: 340px;
+    margin: auto;
+    padding: 25px;
+    border-radius: 20px;
+    border: 2px solid #9c27b0;
+    box-shadow: 0 0 20px rgba(156, 39, 176, 0.3);
+}
+
+h2 { margin-bottom: 5px; }
+
+.stats {
+    background: #2a2a2a;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #bbb;
+}
+
+.mission-btn {
+    width: 100%;
+    padding: 15px;
+    margin: 12px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    background: #2a2a2a;
+    border-left: 5px solid #9c27b0;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.mission-btn:hover { background: #333; transform: translateX(4px); }
+
+.xp-badge {
+    background: rgba(156, 39, 176, 0.2);
+    color: #9c27b0;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.completed {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-left: 5px solid #4caf50 !important;
+}
+
+.back {
+    display: inline-block;
+    margin-top: 25px;
+    color: #888;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #9c27b0;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    opacity: 0;
+    transition: 0.3s;
+}
+.toast.show { opacity: 1; bottom: 40px; }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>🏆 Challenges Log</h2>
+
+    <div class="stats">
+        ⭐ Level: <span id="level">1</span> |
+        ⚡ XP: <span id="xp">0</span>
+    </div>
+
+    <p style="color:#aaa; font-size:13px; margin-bottom:20px;">
+        Face your fears and earn Mega XP!
+    </p>
+
+    <button class="mission-btn" id="m1" onclick="claimXp(35, this)">
+        <span>🗣️ Faced Social Anxiety / Spoke Up</span>
+        <span class="xp-badge">+35 XP</span>
+    </button>
+
+    <button class="mission-btn" id="m2" onclick="claimXp(30, this)">
+        <span>❄️ Cold Shower Challenge Completed</span>
+        <span class="xp-badge">+30 XP</span>
+    </button>
+
+    <br>
+    <a href="dashboard.html" class="back">← Back to Dashboard</a>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+function showToast(msg) {
+    let t = document.getElementById("toast");
+    t.innerText = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2000);
+}
+
+function updateUI() {
+    document.getElementById("xp").innerText = localStorage.getItem("nagx_xp") || 0;
+    document.getElementById("level").innerText = localStorage.getItem("nagx_level") || 1;
+
+    // check completed
+    if(localStorage.getItem("m1_done")) lockBtn("m1");
+    if(localStorage.getItem("m2_done")) lockBtn("m2");
+}
+
+function lockBtn(id) {
+    let btn = document.getElementById(id);
+    btn.classList.add("completed");
+    btn.disabled = true;
+}
+
+function claimXp(reward, btn) {
+
+    let id = btn.id;
+
+    if(localStorage.getItem(id + "_done")) {
+        showToast("⚠️ Already completed!");
+        return;
+    }
+
+    let currentXp = parseInt(localStorage.getItem('nagx_xp')) || 0;
+    let currentLevel = parseInt(localStorage.getItem('nagx_level')) || 1;
+
+    currentXp += reward;
+
+    showToast("🔥 Challenge completed! +" + reward + " XP");
+
+    localStorage.setItem(id + "_done", "true");
+
+    while (currentXp >= (50 * Math.pow(2, currentLevel - 1))) {
+        currentXp -= (50 * Math.pow(2, currentLevel - 1));
+        currentLevel++;
+        showToast("🚀 Level Up! Now Level " + currentLevel);
+    }
+
+    localStorage.setItem('nagx_xp', currentXp);
+    localStorage.setItem('nagx_level', currentLevel);
+
+    updateUI();
+}
+
+updateUI();
+
+</script>
+
+</body>
+</html>

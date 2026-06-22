@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAGX Dashboard</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#111;
+    color:white;
+    text-align:center;
+}
+
+.header{
+    background:linear-gradient(90deg,#6a11cb,#2575fc);
+    padding:25px;
+}
+
+.level-box{
+    width:80%;
+    margin:auto;
+    background:#333;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:10px;
+}
+
+.xp-bar{
+    width:0%;
+    height:20px;
+    background:gold;
+    transition:0.3s;
+}
+
+.container{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:20px;
+    padding:20px;
+}
+
+.card{
+    background:#1e1e1e;
+    width:320px;
+    padding:20px;
+    border-radius:20px;
+    box-shadow:0 0 15px rgba(255,255,255,0.1);
+}
+
+.card h2{
+    margin-bottom:15px;
+}
+
+.btn{
+    display:block;
+    width:100%;
+    padding:12px 0;
+    margin:8px 0;
+    border:none;
+    border-radius:10px;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.study{background:#2196f3;}
+.fitness{background:#4caf50;}
+.habits{background:#ff9800;}
+.confidence{background:#9c27b0;}
+
+.btn:hover{
+    opacity:0.85;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>🚀 NAGX Dashboard</h1>
+    <p>Level Up Every Day</p>
+
+    <h3 id="level-text">⭐ Level 1</h3>
+
+    <div class="level-box">
+        <div id="xp-bar" class="xp-bar"></div>
+    </div>
+
+    <p id="xp-text">0 / 50 XP</p>
+  <p id="coins-text">🪙 Coins: 0</p>
+  <p id="streak-text">🔥 Streak: 0 Days</p>
+</div>
+
+<div class="container">
+
+    <!-- STUDY -->
+    <div class="card">
+        <h2>📚 Study</h2>
+        <a href="study_tracker.html" class="btn study">📈 Track Study</a>
+        <a href="exams.html" class="btn study">🎯 Exams</a>
+    </div>
+
+    <!-- FITNESS -->
+    <div class="card">
+        <h2>💪 Fitness</h2>
+        <a href="fitness_tracker.html" class="btn fitness">🏋 Workout Tracker</a>
+        <a href="diet_counter.html" class="btn fitness">🥗 Diet / Calorie Counter</a>
+    </div>
+
+    <!-- HABITS -->
+    <div class="card">
+        <h2>🔥 Habits</h2>
+        <a href="habits_tracker.html" class="btn habits">✅ Tracking Streak</a>
+        <a href="habit_analytics.html" class="btn habits">📊 Habit Analytics</a>
+    </div>
+
+    <!-- CONFIDENCE -->
+    <div class="card">
+        <h2>😎 Confidence</h2>
+        <a href="affirmations.html" class="btn confidence">🌟 Daily Affirmations</a>
+        <a href="journal.html" class="btn confidence">📝 Journal</a>
+        <a href="challenges.html" class="btn confidence">🏆 Challenges Log</a>
+    </div>
+
+</div>
+
+<script>
+function getXpNeeded(level){
+    return 50 * Math.pow(2, level - 1);
+}
+
+function updateDashboard(){
+    let currentXp = parseInt(localStorage.getItem('nagx_xp')) || 0;
+    let currentLevel = parseInt(localStorage.getItem('nagx_level')) || 1;
+
+    let xpNeeded = getXpNeeded(currentLevel);
+
+    let percent = (currentXp / xpNeeded) * 100;
+
+    document.getElementById("xp-bar").style.width = percent + "%";
+    document.getElementById("xp-text").innerText =
+        currentXp + " / " + xpNeeded + " XP";
+
+    document.getElementById("level-text").innerText =
+        "⭐ Level " + currentLevel;
+  let coins =
+parseInt(localStorage.getItem("nagx_coins")) || 0;
+
+document.getElementById("coins-text").innerText =
+"🪙 Coins: " + coins;
+  let streak =
+parseInt(localStorage.getItem("nagx_streak")) || 0;
+
+document.getElementById("streak-text").innerText =
+"🔥 Streak: " + streak + " Days";
+}
+
+window.onload = updateDashboard;
+</script>
+
+</body>
+</html>
